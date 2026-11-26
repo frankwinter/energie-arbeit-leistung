@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interaktive Erklärung für Physik 9: Energie, Arbeit, Leistung und Kilowattstunde.">
+<style>
+  html { color-scheme: light dark; }
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  html, body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>Energie, Arbeit, Leistung</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* Layout: schmale Lesespalte, drei Begriffe mit eigener Farbe, die sich durch alle Abschnitte ziehen. */
+  :root {
+    --bg: #f5f7f9;
+    --surface: #ffffff;
+    --fg: #17202b;
+    --muted: #5a6878;
+    --line: #dbe2ea;
+    --energie: #c77700;
+    --energie-soft: #fff1dc;
+    --arbeit: #1f6fd1;
+    --arbeit-soft: #e3eefc;
+    --leistung: #c4265e;
+    --leistung-soft: #fbe4ec;
+    --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --font-body: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f141b; --surface: #17202a; --fg: #e8edf3; --muted: #9aa8b8; --line: #2a3644;
+      --energie: #f5a623; --energie-soft: #3a2a10;
+      --arbeit: #5ea2ff; --arbeit-soft: #15283f;
+      --leistung: #ff6b9a; --leistung-soft: #3d1724;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f141b; --surface: #17202a; --fg: #e8edf3; --muted: #9aa8b8; --line: #2a3644;
+    --energie: #f5a623; --energie-soft: #3a2a10;
+    --arbeit: #5ea2ff; --arbeit-soft: #15283f;
+    --leistung: #ff6b9a; --leistung-soft: #3d1724;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-body); font-size: 17px; line-height: 1.55;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 0 48px;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+  h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.1; }
+  h2 { font-size: clamp(1.5rem, 3.4vw, 2rem); font-weight: 800; }
+  h3 { font-size: 1.15rem; font-weight: 700; }
+  p { margin: 0; }
+  .lead { color: var(--muted); max-width: 65ch; }
+  .mono, .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .e { color: var(--energie); } .w { color: var(--arbeit); } .p { color: var(--leistung); }
+  section { display: flex; flex-direction: column; gap: 20px; }
+  .eyebrow { font-family: var(--font-mono); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+  /* ---------- Kopf ---------- */
+  header.hero { padding-top: 48px; display: flex; flex-direction: column; gap: 18px; }
+  header.hero h1 { font-size: clamp(2.2rem, 7vw, 4.2rem); font-weight: 800; letter-spacing: -0.02em; }
+  header.hero h1 span { display: inline-block; }
+  .equation {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
+    font-family: var(--font-mono); font-size: clamp(1rem, 2.6vw, 1.35rem);
+  }
+  .chip { padding: 4px 12px; border-radius: 999px; font-weight: 700; }
+  .chip.e { background: var(--energie-soft); }
+  .chip.w { background: var(--arbeit-soft); }
+  .chip.p { background: var(--leistung-soft); }
+  .op { color: var(--muted); }
+
+  /* ---------- Drei Begriffe ---------- */
+  .trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .concept {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0;
+    border-top: 5px solid var(--c);
+  }
+  .concept .q { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; }
+  .concept dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; font-size: .95rem; }
+  .concept dt { color: var(--muted); }
+  .concept dd { margin: 0; font-weight: 600; }
+  .concept .formula { font-family: var(--font-mono); font-size: 1.2rem; font-weight: 700; color: var(--c); }
+  .concept .ana { font-size: .95rem; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 10px; }
+  .concept.e { --c: var(--energie); } .concept.w { --c: var(--arbeit); } .concept.p { --c: var(--leistung); }
+
+  /* ---------- Simulator ---------- */
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 18px; }
+  .controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 18px; }
+  .ctrl-label { font-size: .85rem; color: var(--muted); }
+  .seg { display: flex; gap: 6px; }
+  .seg button { flex: 1; padding: 6px 10px; font-weight: 600; }
+  .seg button[aria-pressed="true"] { background: var(--energie); border-color: var(--energie); color: var(--surface); }
+  .legend-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
+  .sw.e { background: var(--energie); } .sw.w { background: var(--arbeit); }
+  .ctrl { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .ctrl label { font-size: .85rem; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+  .ctrl label b { font-family: var(--font-mono); color: var(--fg); font-weight: 700; }
+  input[type=range] { width: 100%; accent-color: var(--arbeit); }
+  .lanes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .lane { border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .lane-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .lane-head .clock { font-family: var(--font-mono); color: var(--muted); font-size: .9rem; }
+  .lane svg { width: 100%; height: auto; display: block; }
+  .readout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .stat { border-radius: 10px; padding: 8px 10px; min-width: 0; }
+  .stat small { display: block; font-size: .75rem; color: var(--muted); }
+  .stat strong { font-family: var(--font-mono); font-size: 1.05rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .stat.e { background: var(--energie-soft); } .stat.e strong { color: var(--energie); }
+  .stat.w { background: var(--arbeit-soft); } .stat.w strong { color: var(--arbeit); }
+  .stat.p { background: var(--leistung-soft); } .stat.p strong { color: var(--leistung); }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  button {
+    font: inherit; font-weight: 700; cursor: pointer; border-radius: 10px; padding: 10px 18px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--fg);
+  }
+  button.primary { background: var(--arbeit); border-color: var(--arbeit); color: var(--surface); }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--arbeit); outline-offset: 2px; }
+  .insight { border-left: 4px solid var(--leistung); padding: 4px 0 4px 14px; }
+  .note { font-size: .85rem; color: var(--muted); }
+
+  /* ---------- Tabelle ---------- */
+  .table-scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; background: var(--surface); border-radius: 12px; overflow: hidden; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--font-display); font-size: .9rem; }
+  td .mono { font-weight: 700; }
+  tr:last-child td { border-bottom: 0; }
+  .pitfalls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .pitfall { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .pitfall .wrong { text-decoration: line-through; color: var(--muted); }
+  .pitfall .right { font-weight: 700; }
+
+  /* ---------- Kilowattstunde ---------- */
+  .kwh-def {
+    display: grid; grid-template-columns: repeat(3, auto); justify-content: start; align-items: center;
+    gap: 12px 18px; font-family: var(--font-mono); font-size: clamp(1rem, 2.8vw, 1.4rem); font-weight: 700;
+  }
+  .kwh-def .box { border-radius: 12px; padding: 10px 16px; text-align: center; }
+  .kwh-def .box small { display: block; font-family: var(--font-body); font-weight: 400; font-size: .8rem; color: var(--muted); }
+  .kwh-def .box.p { background: var(--leistung-soft); }
+  .kwh-def .box.t { background: var(--line); }
+  .kwh-def .box.e { background: var(--energie-soft); }
+  .speed { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .speed div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+  .devices { display: flex; flex-wrap: wrap; gap: 8px; }
+  .devices button { padding: 8px 14px; font-weight: 600; }
+  .devices button[aria-pressed="true"] { background: var(--leistung); border-color: var(--leistung); color: var(--surface); }
+  .meter { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px; }
+  .cell { height: 44px; border-radius: 6px; background: var(--line); position: relative; overflow: hidden; }
+  .cell i { position: absolute; inset: 0 auto 0 0; background: var(--energie); width: 0; transition: width .25s; }
+  .meter-legend { display: flex; justify-content: space-between; font-size: .8rem; color: var(--muted); font-family: var(--font-mono); }
+  .results { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .fact { background: var(--energie-soft); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .fact strong { font-family: var(--font-mono); font-size: 1.5rem; color: var(--energie); }
+  .duration-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 24px; margin: 0; padding: 0; list-style: none; }
+  .duration-list li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dotted var(--line); padding: 4px 0; }
+  .duration-list li span:last-child { font-family: var(--font-mono); font-weight: 700; }
+
+  .reasons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .reason { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .reason .ex { font-size: .92rem; color: var(--muted); }
+  .ref-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .ref-compare > div { border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .ref-compare .verdict { font-weight: 700; }
+  .summary { background: var(--arbeit-soft); border-radius: 12px; padding: 14px 16px; }
+
+  footer { color: var(--muted); font-size: .85rem; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  @media (max-width: 760px) {
+    .trio, .pitfalls, .facts, .reasons, .ref-compare { grid-template-columns: 1fr; }
+    .controls { grid-template-columns: 1fr 1fr; }
+    .lanes, .speed { grid-template-columns: 1fr; }
+    .results { grid-template-columns: 1fr 1fr; }
+    .duration-list { grid-template-columns: 1fr; }
+    .kwh-def { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { .cell i { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="eyebrow">Physik 9 · Kapitel A · Energie als Erhaltungsgröße</span>
+    <h1><span class="e">Energie</span>, <span class="w">Arbeit</span>, <span class="p">Leistung</span></h1>
+    <p class="lead">Drei Begriffe, die im Alltag ständig durcheinandergehen. In der Physik beantworten sie drei verschiedene Fragen: Wie viel ist da? Wie viel wird übertragen? Wie schnell geht das?</p>
+    <div class="equation" aria-label="Leistung gleich Arbeit durch Zeit gleich Energieänderung durch Zeit">
+      <span class="chip p">P</span><span class="op">=</span>
+      <span class="chip w">W</span><span class="op">/ Δt =</span>
+      <span class="chip e">ΔE</span><span class="op">/ Δt</span>
+    </div>
+  </header>
+
+  <!-- ============ Die drei Begriffe ============ -->
+  <section aria-labelledby="s1">
+    <span class="eyebrow">Auf einen Blick</span>
+    <h2 id="s1">Drei Größen, drei Fragen</h2>
+    <div class="trio">
+      <article class="concept e">
+        <h3 class="e">Energie</h3>
+        <p class="q">Wie viel steckt drin?</p>
+        <div class="formula">E<sub>h</sub> = m·g·h</div>
+        <dl>
+          <dt>Zeichen</dt><dd>E</dd>
+          <dt>Einheit</dt><dd>1 J (Joule)</dd>
+          <dt>Art</dt><dd>Zustandsgröße</dd>
+        </dl>
+        <p>Beschreibt den Zustand eines Systems. Sie geht nie verloren, sie wird nur umgewandelt (Energieerhaltungssatz).</p>
+        <p class="ana">Bild: der Kontostand. Eine Zahl zu einem Zeitpunkt.</p>
+      </article>
+      <article class="concept w">
+        <h3 class="w">Arbeit</h3>
+        <p class="q">Wie viel wird übertragen?</p>
+        <div class="formula">W = ΔE = F·Δx</div>
+        <dl>
+          <dt>Zeichen</dt><dd>W</dd>
+          <dt>Einheit</dt><dd>1 J = 1 Nm</dd>
+          <dt>Art</dt><dd>Prozessgröße</dd>
+        </dl>
+        <p>Energie, die durch eine Kraft entlang eines Weges zugeführt (ΔE &gt; 0) oder entzogen (ΔE &lt; 0) wird.</p>
+        <p class="ana">Bild: die Überweisung. Ein Betrag, der vom einen zum anderen geht.</p>
+      </article>
+      <article class="concept p">
+        <h3 class="p">Leistung</h3>
+        <p class="q">Wie schnell geht das?</p>
+        <div class="formula">P = ΔE / Δt</div>
+        <dl>
+          <dt>Zeichen</dt><dd>P</dd>
+          <dt>Einheit</dt><dd>1 W = 1 J/s</dd>
+          <dt>Art</dt><dd>Rate (pro Sekunde)</dd>
+        </dl>
+        <p>Energieänderung pro Zeitspanne. Große Leistung heißt: viel Energie in kurzer Zeit.</p>
+        <p class="ana">Bild: wie viel Euro pro Sekunde überwiesen werden.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ Simulator ============ -->
+  <section aria-labelledby="s2">
+    <span class="eyebrow">Ausprobieren</span>
+    <h2 id="s2">Gleiche Arbeit, andere Leistung</h2>
+    <p class="lead">Anna und Ben heben dieselbe Kiste vom Tisch auf dieselbe Höhe. Beide verrichten genau die gleiche Hubarbeit. Anna ist nur schneller. Ändere die Werte, wechsle das Bezugsniveau und starte das Heben. Achte darauf, wann Höhenenergie und Arbeit gleich sind und wann nicht.</p>
+
+    <div class="panel">
+      <div class="controls">
+        <div class="ctrl">
+          <label for="m">Masse m <b id="m-out"></b></label>
+          <input id="m" type="range" min="1" max="100" step="1" value="20">
+        </div>
+        <div class="ctrl">
+          <label for="h0">Starthöhe (Tisch) <b id="h0-out"></b></label>
+          <input id="h0" type="range" min="0" max="10" step="0.25" value="1">
+        </div>
+        <div class="ctrl">
+          <label for="h">Endhöhe h <b id="h-out"></b></label>
+          <input id="h" type="range" min="1" max="20" step="0.5" value="5">
+        </div>
+        <div class="ctrl">
+          <label for="ta">Zeit Anna <b id="ta-out"></b></label>
+          <input id="ta" type="range" min="2" max="60" step="1" value="10">
+        </div>
+        <div class="ctrl">
+          <label for="tb">Zeit Ben <b id="tb-out"></b></label>
+          <input id="tb" type="range" min="2" max="60" step="1" value="40">
+        </div>
+        <div class="ctrl">
+          <span class="ctrl-label" id="ref-label">Bezugsniveau (hier ist Eₕ = 0)</span>
+          <div class="seg" role="group" aria-labelledby="ref-label">
+            <button type="button" id="ref-boden" aria-pressed="true">Boden</button>
+            <button type="button" id="ref-tisch" aria-pressed="false">Tisch</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="lanes">
+        <div class="lane" id="lane-a">
+          <div class="lane-head"><h3>Anna</h3><span class="clock" id="clock-a">t = 0,0 s</span></div>
+          <svg id="svg-a" viewBox="0 0 320 260" role="img" aria-label="Anna hebt eine Kiste mit einem Seil vom Tisch nach oben"></svg>
+          <div class="readout">
+            <div class="stat e"><small class="e-label">Höhenenergie</small><strong id="e-a">0 J</strong></div>
+            <div class="stat w"><small>Arbeit W</small><strong id="w-a">0 J</strong></div>
+            <div class="stat p"><small>Leistung beim Heben</small><strong id="p-a">0 W</strong></div>
+          </div>
+        </div>
+
+        <div class="lane" id="lane-b">
+          <div class="lane-head"><h3>Ben</h3><span class="clock" id="clock-b">t = 0,0 s</span></div>
+          <svg id="svg-b" viewBox="0 0 320 260" role="img" aria-label="Ben hebt eine Kiste mit einem Seil vom Tisch nach oben"></svg>
+          <div class="readout">
+            <div class="stat e"><small class="e-label">Höhenenergie</small><strong id="e-b">0 J</strong></div>
+            <div class="stat w"><small>Arbeit W</small><strong id="w-b">0 J</strong></div>
+            <div class="stat p"><small>Leistung beim Heben</small><strong id="p-b">0 W</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="note" id="rest-note"></p>
+      <p class="note legend-bar">Balken Eₕ: <span class="sw e"></span> Höhenenergie, die die Kiste schon vorher hatte · <span class="sw w"></span> durch Arbeit hinzugekommen (W = ΔE) · gestrichelte Linie: Nullniveau</p>
+      <div class="actions">
+        <button class="primary" id="run" type="button">Heben starten</button>
+        <button id="reset" type="button">Zurücksetzen</button>
+        <span class="note">Die Animation läuft 4-mal schneller als in echt.</span>
+      </div>
+      <p class="insight" id="insight"></p>
+    </div>
+  </section>
+
+  <!-- ============ Vergleich ============ -->
+  <section aria-labelledby="s3">
+    <span class="eyebrow">Vergleichen</span>
+    <h2 id="s3">Der Unterschied in einer Tabelle</h2>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Größe</th><th>Frage</th><th>Formel</th><th>Einheit</th><th>Beispiel Hochspringer</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="e"><b>Energie E</b></td><td>Wie viel Energie hat das System gerade?</td><td><span class="mono">E<sub>h</sub> = m·g·h</span></td><td>J</td><td>Über der Stange hat er 1200 J mehr Höhenenergie.</td></tr>
+          <tr><td class="w"><b>Arbeit W</b></td><td>Wie viel Energie wurde durch eine Kraft übertragen?</td><td><span class="mono">W = ΔE = F·Δx</span></td><td>J = Nm</td><td>Zum Überwinden der Stange nötig: W = 1200 J.</td></tr>
+          <tr><td class="p"><b>Leistung P</b></td><td>Wie schnell wurde die Energie übertragen?</td><td><span class="mono">P = ΔE / Δt</span></td><td>W = J/s</td><td>Er schafft das in 2 s: P = 600 W.</td></tr>
+          <tr><td><b>Kraft F</b></td><td>Wie stark wird gezogen oder gedrückt?</td><td><span class="mono">F<sub>G</sub> = m·g</span></td><td>N</td><td>Seine Gewichtskraft. Keine Energie!</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Typische Verwechslungen</h3>
+    <div class="pitfalls">
+      <div class="pitfall">
+        <span class="wrong">„Der Toaster ist kraftvoll mit 1000 W.“</span>
+        <span class="right">Der Toaster hat eine Leistung von 1000 W.</span>
+        <span class="note">Watt misst Leistung, nicht Kraft. Kraft wird in Newton gemessen.</span>
+      </div>
+      <div class="pitfall">
+        <span class="wrong">„Strom wird verbraucht.“</span>
+        <span class="right">Elektrische Energie wird umgewandelt.</span>
+        <span class="note">Energie bleibt erhalten. Sie wird z. B. in Licht und innere Energie umgewandelt.</span>
+      </div>
+      <div class="pitfall">
+        <span class="wrong">„Koffer tragen ist harte Arbeit.“</span>
+        <span class="right">Waagrecht tragen: W = 0.</span>
+        <span class="note">Die Höhe ändert sich nicht, also ändert sich die Höhenenergie nicht.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Energie = Arbeit? ============ -->
+  <section aria-labelledby="s3b">
+    <span class="eyebrow">Häufige Frage</span>
+    <h2 id="s3b">Ist Energie dasselbe wie Arbeit?</h2>
+    <p class="lead">Nein. Beide werden in Joule gemessen, aber Arbeit ist die <b>Änderung</b> der Energie, nicht die Energie selbst.</p>
+    <div class="equation" aria-label="W gleich Delta E gleich E nachher minus E vorher">
+      <span class="chip w">W</span><span class="op">=</span>
+      <span class="chip e">ΔE</span><span class="op">=</span>
+      <span class="chip e">E<sub>nachher</sub> − E<sub>vorher</sub></span>
+    </div>
+
+    <div class="reasons">
+      <div class="reason">
+        <h3>1. Energie ist ein Zustand, Arbeit ein Vorgang</h3>
+        <p>Energie sagt, wie viel ein Körper gerade hat. Arbeit sagt, wie viel bei einem Vorgang übertragen wurde.</p>
+        <p class="ex">Eine Kiste (20 kg) in 5 m Höhe hat E<sub>h</sub> = 981 J. Stand sie vorher schon auf 4 m, war zum Anheben nur W = 20 · 9,81 · 1 J = 196 J nötig.</p>
+      </div>
+      <div class="reason">
+        <h3>2. Energie ohne Arbeit</h3>
+        <p>Ein Körper kann viel Energie haben, ohne dass Arbeit verrichtet wird.</p>
+        <p class="ex">Hältst du die Kiste oder trägst du sie waagrecht, bleibt E<sub>h</sub> = 981 J, aber W = 0, weil ΔE = 0 (S. 30). Ein parkendes Auto am Hang hat Höhenenergie, ohne dass Arbeit verrichtet wird.</p>
+      </div>
+      <div class="reason">
+        <h3>3. Arbeit kann negativ sein</h3>
+        <p>Wird dem System Energie entzogen, ist ΔE &lt; 0 und damit auch W &lt; 0.</p>
+        <p class="ex">Beim Bremsen eines Autos entzieht die Reibungskraft kinetische Energie (S. 28).</p>
+      </div>
+      <div class="reason">
+        <h3>4. Nicht jede Energieänderung ist Arbeit</h3>
+        <p>Arbeit ist Energieübertragung durch eine Kraft entlang eines Weges (W = F · Δx). Energie kann sich auch anders ändern.</p>
+        <p class="ex">Eine Herdplatte erwärmt Wasser, eine Solarzelle wandelt Licht in elektrische Energie um. Dabei wird keine mechanische Arbeit verrichtet.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Wann sind Arbeit und Energie gleich?</h3>
+      <p>Nur wenn der Körper bei null Energie startet. Dann gilt W = ΔE = E − 0 = E. Was „null“ ist, legst du aber selbst fest: Bei der Höhenenergie ist das das Bezugsniveau, und das ist frei wählbar (S. 21). Beispiel: Die Kiste wird von 4 m auf 5 m gehoben.</p>
+      <div class="ref-compare">
+        <div>
+          <span class="eyebrow">Bezugsniveau: Boden</span>
+          <p>Vorher E<sub>h</sub> = 785 J, nachher E<sub>h</sub> = 981 J</p>
+          <p class="mono w">W = 981 J − 785 J = 196 J</p>
+          <p class="verdict">W ≠ E: Arbeit 196 J, Energie 981 J</p>
+        </div>
+        <div>
+          <span class="eyebrow">Bezugsniveau: 4 m</span>
+          <p>Vorher E<sub>h</sub> = 0 J, nachher E<sub>h</sub> = 196 J</p>
+          <p class="mono w">W = 196 J − 0 J = 196 J</p>
+          <p class="verdict">W = E: beide 196 J</p>
+        </div>
+      </div>
+      <p>Physikalisch passiert in beiden Fällen dasselbe, nur die Buchführung ist anders. Die Arbeit W = ΔE ist immer gleich. Deshalb zählt nur der Höhenunterschied.</p>
+      <p>Bei der kinetischen Energie ist der Nullpunkt natürlich: Ein ruhender Körper hat E<sub>kin</sub> = 0. Beschleunigt ein Auto aus dem Stand, ist die Beschleunigungsarbeit gleich der kinetischen Energie am Ende: W<sub>B</sub> = E<sub>kin</sub> (S. 29).</p>
+      <p><b>Zweite Bedingung:</b> Die Arbeit muss der einzige Weg sein, auf dem sich die Energie ändert. Wirkt Reibung mit, wird ein Teil der Arbeit zu innerer Energie: W = ΔE<sub>h</sub> + ΔE<sub>i</sub>. Kommt Energie zusätzlich als Wärme oder Licht hinzu, ist dieser Teil keine Arbeit.</p>
+      <p class="summary"><b>Kurz:</b> W = E nur, wenn der Körper bei null Energie startet (in Ruhe bzw. auf dem Bezugsniveau) und die Arbeit die einzige Energieübertragung ist. Sonst gilt immer W = ΔE: die Änderung, nicht der Betrag.</p>
+    </div>
+  </section>
+
+  <!-- ============ Kilowattstunde ============ -->
+  <section aria-labelledby="s4">
+    <span class="eyebrow">Stromrechnung verstehen</span>
+    <h2 id="s4">Was ist eine Kilowattstunde?</h2>
+    <p class="lead">Die Kilowattstunde (kWh) ist eine Einheit für <b class="e">Energie</b>, keine Leistung. Sie gibt an, wie viel Energie ein Gerät mit 1 kW Leistung in einer Stunde umsetzt.</p>
+
+    <div class="kwh-def" aria-label="1 Kilowatt mal 1 Stunde gleich 1 Kilowattstunde gleich 3,6 Megajoule">
+      <div class="box p">1 kW<small>Leistung = 1000 J pro Sekunde</small></div>
+      <div class="box t">× 1 h<small>Zeit = 3600 s</small></div>
+      <div class="box e">= 1 kWh<small>= 3 600 000 J = 3,6 MJ</small></div>
+    </div>
+
+    <div class="speed">
+      <div>
+        <h3>Merkhilfe aus dem Straßenverkehr</h3>
+        <p><span class="p"><b>km/h</b></span> sagt, wie schnell du fährst. <span class="e"><b>km</b></span> sagt, wie weit du gekommen bist. 100 km/h eine Stunde lang ergibt 100 km.</p>
+      </div>
+      <div>
+        <h3>Genauso beim Strom</h3>
+        <p><span class="p"><b>kW</b></span> sagt, wie schnell Energie umgesetzt wird. <span class="e"><b>kWh</b></span> sagt, wie viel Energie insgesamt umgesetzt wurde. 2 kW eine halbe Stunde lang ergibt 1 kWh.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Rechner: Wie viel Energie braucht ein Gerät?</h3>
+      <div class="devices" id="devices" role="group" aria-label="Gerät auswählen"></div>
+      <div class="ctrl">
+        <label for="minutes">Betriebsdauer <b id="minutes-out"></b></label>
+        <input id="minutes" type="range" min="1" max="600" step="1" value="60">
+      </div>
+      <div class="results">
+        <div class="stat p"><small>Leistung P</small><strong id="r-p"></strong></div>
+        <div class="stat e"><small>Energie in kWh</small><strong id="r-kwh"></strong></div>
+        <div class="stat e"><small>Energie in Joule</small><strong id="r-j"></strong></div>
+        <div class="stat w"><small>Kosten bei 30 ct/kWh</small><strong id="r-cost"></strong></div>
+      </div>
+      <div>
+        <div class="meter" id="meter" aria-hidden="true"></div>
+        <div class="meter-legend"><span>0 kWh</span><span>jedes Feld = 1 kWh</span><span>10 kWh</span></div>
+      </div>
+      <p class="note mono" id="r-calc"></p>
+    </div>
+
+    <h3>So lange reicht 1 kWh</h3>
+    <ul class="duration-list" id="durations"></ul>
+
+    <h3>So viel ist 1 kWh in Höhenenergie</h3>
+    <div class="facts">
+      <div class="fact"><strong>≈ 4 900 m</strong><span>So hoch könnte man eine 75 kg schwere Person heben. Die Zugspitze ist 2 962 m hoch.</span></div>
+      <div class="fact"><strong>≈ 280 m</strong><span>So hoch könnte man ein Auto mit 1,3 t heben.</span></div>
+      <div class="fact"><strong>≈ 367 t</strong><span>So viel Wasser könnte man einen Meter hoch pumpen.</span></div>
+    </div>
+    <p class="note">Gerechnet mit h = E / (m·g) und E = 3,6 MJ, g = 9,81 m/s², ohne Reibung.</p>
+  </section>
+
+  <footer>Grundlage: Physik 9 · Gymnasium Bayern, Kapitel A „Energie als Erhaltungsgröße“ (S. 14–65). Gerätewerte aus der Tabelle auf S. 53.</footer>
+</div>
+
+<script>
+(function () {
+  const g = 9.81;
+  const SPEED = 4; // Animation läuft 4x schneller
+  const de = (x, d = 0) => x.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const fmtJ = (j) => j >= 1e6 ? de(j / 1e6, 2) + " MJ" : j >= 1e4 ? de(j / 1000, 1) + " kJ" : de(j, 0) + " J";
+  const fmtW = (w) => w >= 1000 ? de(w / 1000, w >= 10000 ? 0 : 1) + " kW" : de(w, w < 10 ? 1 : 0) + " W";
+  const $ = (id) => document.getElementById(id);
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- Simulator ---------- */
+  const inputs = { m: $("m"), h0: $("h0"), h: $("h"), ta: $("ta"), tb: $("tb") };
+  const GROUND = 240, SCALE_PX = 170, BAR_TOP = 40, BAR_H = 200, BOX_H = 30;
+  const NS = "http://www.w3.org/2000/svg", MONO = "JetBrains Mono, monospace";
+  let raf = null, startTs = 0, ref = "boden";
+
+  function el(parent, tag, attrs, text) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text) e.textContent = text;
+    parent.appendChild(e);
+    return e;
+  }
+  const lanes = {};
+  ["a", "b"].forEach((k) => {
+    const s = $("svg-" + k), L = {};
+    el(s, "line", { x1: 20, y1: GROUND, x2: 300, y2: GROUND, stroke: "var(--muted)", "stroke-width": 2 });
+    el(s, "text", { x: 22, y: 254, "font-family": MONO, "font-size": 10, fill: "var(--muted)" }, "Boden");
+    el(s, "line", { x1: 60, y1: 24, x2: 220, y2: 24, stroke: "var(--muted)", "stroke-width": 3 });
+    L.desk = el(s, "g", {});
+    L.deskTop = el(L.desk, "rect", { x: 92, width: 96, height: 6, rx: 1.5, fill: "var(--muted)" });
+    L.legL = el(L.desk, "rect", { x: 100, width: 6, fill: "var(--muted)" });
+    L.legR = el(L.desk, "rect", { x: 174, width: 6, fill: "var(--muted)" });
+    L.rope = el(s, "line", { x1: 140, y1: 24, x2: 140, stroke: "var(--arbeit)", "stroke-width": 2.5 });
+    el(s, "circle", { cx: 140, cy: 24, r: 8, fill: "var(--surface)", stroke: "var(--muted)", "stroke-width": 3 });
+    L.box = el(s, "rect", { x: 115, width: 50, height: BOX_H, rx: 3, fill: "var(--energie)" });
+    L.mlabel = el(s, "text", { x: 140, "text-anchor": "middle", "font-family": MONO, "font-size": 12, "font-weight": 700, fill: "var(--surface)" });
+    L.zero = el(s, "line", { x1: 20, x2: 255, stroke: "var(--energie)", "stroke-width": 1.5, "stroke-dasharray": "6 4" });
+    L.zlabel = el(s, "text", { x: 22, "font-family": MONO, "font-size": 10, fill: "var(--energie)" }, "Nullniveau");
+    L.dim = el(s, "line", { x1: 205, x2: 205, stroke: "var(--muted)", "stroke-width": 1.5 });
+    L.t1 = el(s, "line", { x1: 200, x2: 210, stroke: "var(--muted)", "stroke-width": 1.5 });
+    L.t2 = el(s, "line", { x1: 200, x2: 210, stroke: "var(--muted)", "stroke-width": 1.5 });
+    L.dlabel = el(s, "text", { x: 212, "font-family": MONO, "font-size": 11, "font-weight": 700, fill: "var(--muted)" }, "Δh");
+    L.dval = el(s, "text", { x: 212, "font-family": MONO, "font-size": 10, fill: "var(--muted)" });
+    el(s, "rect", { x: 268, y: BAR_TOP, width: 20, height: BAR_H, rx: 4, fill: "var(--line)" });
+    L.bar0 = el(s, "rect", { x: 268, width: 20, fill: "var(--energie)" });
+    L.barW = el(s, "rect", { x: 268, width: 20, fill: "var(--arbeit)" });
+    el(s, "text", { x: 278, y: 32, "text-anchor": "middle", "font-family": MONO, "font-size": 11, fill: "var(--muted)" }, "Eₕ");
+    lanes[k] = L;
+  });
+
+  function vals() {
+    return { m: +inputs.m.value, h0: +inputs.h0.value, h: +inputs.h.value, ta: +inputs.ta.value, tb: +inputs.tb.value };
+  }
+  const ypx = (z, v) => GROUND - (z / v.h) * SCALE_PX;
+  function drawLane(k, frac, t, v, tEnd) {
+    const L = lanes[k];
+    const dh = v.h - v.h0, W = v.m * g * dh;
+    const zRef = ref === "tisch" ? v.h0 : 0;
+    const z = v.h0 + frac * dh;
+    const e0 = v.m * g * (v.h0 - zRef), eNow = v.m * g * (z - zRef), eMax = v.m * g * (v.h - zRef);
+    const y = ypx(z, v);
+    L.box.setAttribute("y", y - BOX_H);
+    L.mlabel.setAttribute("y", y - 10);
+    L.mlabel.textContent = v.m + " kg";
+    L.rope.setAttribute("y2", y - BOX_H);
+    const dy = ypx(v.h0, v), ty = ypx(v.h, v);
+    L.desk.style.display = v.h0 > 0 ? "" : "none";
+    L.deskTop.setAttribute("y", dy);
+    [L.legL, L.legR].forEach((leg) => { leg.setAttribute("y", dy + 6); leg.setAttribute("height", Math.max(0, GROUND - dy - 6)); });
+    const zy = ypx(zRef, v);
+    L.zero.setAttribute("y1", zy); L.zero.setAttribute("y2", zy);
+    L.zlabel.setAttribute("y", zy - 4);
+    L.dim.setAttribute("y1", dy); L.dim.setAttribute("y2", ty);
+    L.t1.setAttribute("y1", dy); L.t1.setAttribute("y2", dy);
+    L.t2.setAttribute("y1", ty); L.t2.setAttribute("y2", ty);
+    const mid = (dy + ty) / 2;
+    L.dlabel.setAttribute("y", mid - 2);
+    L.dval.setAttribute("y", mid + 11);
+    L.dval.textContent = de(dh, 2) + " m";
+    const h0px = (e0 / eMax) * BAR_H, wpx = ((eNow - e0) / eMax) * BAR_H;
+    L.bar0.setAttribute("y", BAR_TOP + BAR_H - h0px); L.bar0.setAttribute("height", h0px);
+    L.barW.setAttribute("y", BAR_TOP + BAR_H - h0px - wpx); L.barW.setAttribute("height", wpx);
+    $("clock-" + k).textContent = "t = " + de(t, 1) + " s";
+    $("e-" + k).textContent = fmtJ(eNow);
+    $("w-" + k).textContent = fmtJ(W * frac);
+    // Leistung gibt es nur während des Hebens: vorher ist ΔE = 0, also P = 0.
+    $("p-" + k).textContent = frac === 0 ? "0 W" : fmtW(W / tEnd);
+  }
+  function insight(v) {
+    const dh = v.h - v.h0, W = v.m * g * dh, pa = W / v.ta, pb = W / v.tb;
+    const ratio = Math.max(pa, pb) / Math.min(pa, pb);
+    const who = pa > pb ? "Anna" : "Ben";
+    const eStart = v.m * g * v.h0, eEnd = v.m * g * v.h;
+    let energyText;
+    if (v.h0 === 0) {
+      energyText = "Die Kiste startet auf dem Boden, also auf dem Nullniveau. Deshalb ist die Höhenenergie am Ende genau so groß wie die Arbeit.";
+    } else if (ref === "boden") {
+      energyText = "Die Kiste hat auf dem Tisch schon <b class=\"e\">Eₕ = " + fmtJ(eStart) + "</b>. Am Ende hat sie <b class=\"e\">" + fmtJ(eEnd) + "</b>, die Arbeit ist aber nur die Änderung: <b class=\"w\">W = ΔE = " + fmtJ(eEnd) + " − " + fmtJ(eStart) + " = " + fmtJ(W) + "</b>. Hier ist W ≠ Eₕ.";
+    } else {
+      energyText = "Das Nullniveau liegt auf dem Tisch. Die Höhenenergie startet deshalb bei 0 J, und am Ende sind <b class=\"e\">Eₕ</b> und <b class=\"w\">W</b> gleich groß (" + fmtJ(W) + "). Physikalisch ist es derselbe Vorgang wie mit dem Boden als Nullniveau: Die Arbeit ändert sich nicht.";
+    }
+    const restE = ref === "tisch" || v.h0 === 0
+      ? "Vor dem Heben liegt die Kiste auf dem Nullniveau: Eₕ = 0 J."
+      : "Vor dem Heben liegt die Kiste auf dem Tisch und hat schon Eₕ = " + fmtJ(eStart) + " (gemessen vom Boden).";
+    $("rest-note").textContent = restE + " Leistung gibt es aber noch keine: Solange die Kiste still liegt, wird keine Energie übertragen (ΔE = 0, also P = 0). Leistung gibt es nur während des Hebens, bei gleichmäßigem Heben konstant P = W / Δt.";
+    $("insight").innerHTML = "Beide verrichten <b class=\"w\">W = m·g·Δh = " + v.m + " kg · 9,81 m/s² · " + de(dh, 2) + " m = " + fmtJ(W) + "</b>. " + energyText + " " +
+      (pa === pb ? "Da beide gleich lange brauchen, ist auch die Leistung gleich." :
+      who + " ist schneller und hat deshalb die " + de(ratio, 1) + "-fache <b class=\"p\">Leistung</b>: " + fmtW(pa) + " gegenüber " + fmtW(pb) + ".");
+  }
+  function setRef(r) {
+    ref = r;
+    $("ref-boden").setAttribute("aria-pressed", r === "boden");
+    $("ref-tisch").setAttribute("aria-pressed", r === "tisch");
+    idle(); finish();
+  }
+  $("ref-boden").addEventListener("click", () => setRef("boden"));
+  $("ref-tisch").addEventListener("click", () => setRef("tisch"));
+  inputs.h0.addEventListener("input", () => {
+    if (+inputs.h0.value > +inputs.h.value - 0.5) inputs.h.value = Math.min(20, +inputs.h0.value + 0.5);
+  });
+  inputs.h.addEventListener("input", () => {
+    if (+inputs.h.value - 0.5 < +inputs.h0.value) inputs.h0.value = Math.max(0, +inputs.h.value - 0.5);
+  });
+  function idle() {
+    cancelAnimationFrame(raf); raf = null;
+    const v = vals();
+    $("m-out").textContent = v.m + " kg";
+    $("h0-out").textContent = v.h0 === 0 ? "Boden" : de(v.h0, 2) + " m";
+    $("h-out").textContent = de(v.h, 1) + " m";
+    $("ta-out").textContent = v.ta + " s";
+    $("tb-out").textContent = v.tb + " s";
+    drawLane("a", 0, 0, v, v.ta);
+    drawLane("b", 0, 0, v, v.tb);
+    insight(v);
+    $("run").textContent = "Heben starten";
+  }
+  function finish() {
+    const v = vals();
+    drawLane("a", 1, v.ta, v, v.ta);
+    drawLane("b", 1, v.tb, v, v.tb);
+  }
+  function step(ts) {
+    const v = vals();
+    const t = (ts - startTs) / 1000 * SPEED;
+    drawLane("a", Math.min(1, t / v.ta), Math.min(t, v.ta), v, v.ta);
+    drawLane("b", Math.min(1, t / v.tb), Math.min(t, v.tb), v, v.tb);
+    if (t < Math.max(v.ta, v.tb)) raf = requestAnimationFrame(step);
+    else { raf = null; $("run").textContent = "Nochmal heben"; }
+  }
+  $("run").addEventListener("click", () => {
+    cancelAnimationFrame(raf);
+    if (reduce) { finish(); $("run").textContent = "Nochmal heben"; return; }
+    startTs = performance.now();
+    raf = requestAnimationFrame(step);
+  });
+  $("reset").addEventListener("click", idle);
+  Object.values(inputs).forEach((el) => el.addEventListener("input", idle));
+  idle();
+  finish(); // Startzustand: Kisten oben, damit die Ergebnisse sofort sichtbar sind
+
+  /* ---------- kWh-Rechner ---------- */
+  const devices = [
+    { name: "Tablet", p: 4 },
+    { name: "LED-Lampe", p: 13 },
+    { name: "Glühlampe", p: 100 },
+    { name: "Wasserkocher", p: 2200 },
+    { name: "Waschmaschine", p: 2200 },
+    { name: "Wallbox (E-Auto)", p: 11000 }
+  ];
+  let current = 3;
+  const devWrap = $("devices");
+  devices.forEach((d, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = d.name + " · " + fmtW(d.p);
+    b.setAttribute("aria-pressed", i === current);
+    b.addEventListener("click", () => { current = i; update(); });
+    devWrap.appendChild(b);
+  });
+  const meter = $("meter");
+  for (let i = 0; i < 10; i++) { const c = document.createElement("div"); c.className = "cell"; c.appendChild(document.createElement("i")); meter.appendChild(c); }
+
+  function fmtDuration(min) {
+    if (min < 60) return de(min, 0) + " min";
+    const h = Math.floor(min / 60), r = Math.round(min % 60);
+    return r ? h + " h " + r + " min" : h + " h";
+  }
+  function update() {
+    const d = devices[current];
+    const min = +$("minutes").value;
+    const kwh = d.p / 1000 * (min / 60);
+    $("minutes-out").textContent = fmtDuration(min);
+    [...devWrap.children].forEach((b, i) => b.setAttribute("aria-pressed", i === current));
+    $("r-p").textContent = fmtW(d.p);
+    $("r-kwh").textContent = de(kwh, kwh < 0.1 ? 3 : 2) + " kWh";
+    $("r-j").textContent = fmtJ(kwh * 3.6e6);
+    $("r-cost").textContent = de(kwh * 0.30, 2) + " €";
+    $("r-calc").textContent = "E = P · t = " + de(d.p / 1000, 3) + " kW · " + de(min / 60, 2) + " h = " + de(kwh, 3) + " kWh" + (kwh > 10 ? "  (Anzeige endet bei 10 kWh)" : "");
+    [...meter.children].forEach((c, i) => { c.firstChild.style.width = Math.max(0, Math.min(1, kwh - i)) * 100 + "%"; });
+  }
+  $("minutes").addEventListener("input", update);
+  update();
+
+  $("durations").innerHTML = devices.filter((d, i) => i !== 4).map((d) => {
+    const h = 1000 / d.p;
+    const txt = h >= 24 ? de(h / 24, 1) + " Tage" : h >= 1 ? de(h, 1) + " h" : de(h * 60, 0) + " min";
+    return "<li><span>" + d.name + " (" + fmtW(d.p) + ")</span><span>" + txt + "</span></li>";
+  }).join("");
+})();
+</script>
+</body>
+</html>
